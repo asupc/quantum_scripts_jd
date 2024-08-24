@@ -122,7 +122,7 @@ async function doCheck(uid, refrensh) {
             }
             return;
         }
-        if (!process.env.jd_auto_login_uid && checkResult.status == "SMS") {
+        if (!refrensh && checkResult.status == "SMS") {
             await sendNotify("本次登录需要验证短信验证码，请回复您收到的6位验证码！");
             break;
         }
@@ -131,14 +131,21 @@ async function doCheck(uid, refrensh) {
             await redoStepCommandTask();
         }
         if (checkResult.status == "error") {
-            if (refrensh && checkResult.msg.indexOf("账号或密码不正确") > -1) {
+            if (refrensh) {
                 let customDatas = await getCustomData(customDataType, null, null, { Data4: jdAccount });
-                if (customDatas && customDatas.length > 0) {
-                    customDatas[0].Data7 = "否";
-                    await updateCustomData(newEntry);
-                    await sendNotify(`京东账号[${customDatas[0].Data4}]密码错误
-如需继续使用请重新提交。`, false, process.env.user_id);
+                let msg = ""
+                if (checkResult.msg.indexOf("账号或密码不正确") > -1) {
+                    if (customDatas && customDatas.length > 0) {
+                        customDatas[0].Data7 = "否";
+                        await updateCustomData(newEntry);
+                    }
+                    msg = `京东账号[${customDatas[0].Data4}]密码错误
+如需继续使用请重新提交。`
+                }else if(checkResult.msg.indexOf("自动续期时不能使用短信验证") > -1){
+                    msg = `京东账号[${customDatas[0].Data4}]密码错误
+自动登录时出现短信验证，请重新提交一次账号密码。`
                 }
+                await sendNotify(msg, false, process.env.user_id);
             } else {
                 let msg = "，请重新开始"
                 if (checkResult.msg.indexOf("账号或密码不正确") > -1) {
