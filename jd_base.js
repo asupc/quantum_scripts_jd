@@ -121,27 +121,32 @@ async function checkAddCookie(cookie) {
         }
     }
     let nickName = UserName2;
-    let jdInfo = await GetJDUserInfoUnion(cookie);
     let msg = "京东账号提交成功！";
-    if (jdInfo.retcode == 0) {
-        nickName = jdInfo.data.userInfo.baseInfo.nickname || nickName
-        msg += `
+    try {
+        let jdInfo = await GetJDUserInfoUnion(cookie);
+        if (jdInfo.retcode == 0) {
+            nickName = jdInfo.data.userInfo.baseInfo.nickname || nickName
+            msg += `
 用户等级：${jdInfo.data.userInfo.baseInfo.levelName}
 京东昵称：${jdInfo.data.userInfo.baseInfo.nickname || nickName}`
-        try {
-            if (jdInfo.data.assetInfo.beanNum) {
-                msg += "\r\n剩余京豆：" + jdInfo.data.assetInfo.beanNum
-            }
-            if (jdInfo.data.assetInfo.redBalance && parseInt(jdInfo.data.assetInfo.redBalance) > 0) {
-                msg += "\r\n剩余红包：" + jdInfo.data.assetInfo.redBalance
-            }
-        } catch {
+            try {
+                if (jdInfo.data.assetInfo.beanNum) {
+                    msg += "\r\n剩余京豆：" + jdInfo.data.assetInfo.beanNum
+                }
+                if (jdInfo.data.assetInfo.redBalance && parseInt(jdInfo.data.assetInfo.redBalance) > 0) {
+                    msg += "\r\n剩余红包：" + jdInfo.data.assetInfo.redBalance
+                }
+            } catch {
 
-        }
-    } else {
-        console.log("获取账号基本信息限流。。")
-        msg += `
+            }
+        } else {
+            console.log("获取账号基本信息限流。。")
+            msg += `
  查询账户信息被京东限流，建议稍后查询。`
+        }
+    } catch (e) {
+        msg += `
+查询账户信息被京东限流，建议稍后查询。`
     }
     if (process.env.user_id) {
         await sendNotify(msg);
