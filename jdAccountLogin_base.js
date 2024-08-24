@@ -107,7 +107,7 @@ async function doCheck(uid, refrensh) {
                     Data6: pt_pin,
                     Data7: "是"
                 };
-                let customDatas = await getCustomData(customDataType, null, null, { Data4: jdAccount });
+                let customDatas = await getCustomData(customDataType, null, null, { Data4: process.env.script_jd_account });
                 if (customDatas && customDatas.length > 0) {
                     console.log("更新京东账号信息到自定义数据中");
                     newEntry.Id = customDatas[0].Id;
@@ -132,7 +132,7 @@ async function doCheck(uid, refrensh) {
         }
         if (checkResult.status == "error") {
             if (refrensh) {
-                let customDatas = await getCustomData(customDataType, null, null, { Data4: jdAccount });
+                let customDatas = await getCustomData(customDataType, null, null, { Data4: process.env.script_jd_account });
                 let msg = ""
                 if (checkResult.msg.indexOf("账号或密码不正确") > -1) {
                     if (customDatas && customDatas.length > 0) {
