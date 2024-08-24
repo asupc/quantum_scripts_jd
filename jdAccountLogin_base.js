@@ -100,10 +100,10 @@ async function doCheck(uid, refrensh) {
                 const newEntry = {
                     Type: customDataType,
                     Data1: process.env.user_id,
-                    Data2: CommunicationUserName,
-                    Data3: CommunicationUserId,
-                    Data4: jdAccount,
-                    Data5: jdPassword,
+                    Data2: process.env.CommunicationUserName,
+                    Data3: process.env.CommunicationUserId,
+                    Data4: process.env.script_jd_account,
+                    Data5: process.env.script_jd_password,
                     Data6: pt_pin,
                     Data7: "是"
                 };
@@ -141,7 +141,7 @@ async function doCheck(uid, refrensh) {
                     }
                     msg = `京东账号[${customDatas[0].Data4}]密码错误
 如需继续使用请重新提交。`
-                }else if(checkResult.msg.indexOf("自动续期时不能使用短信验证") > -1){
+                } else if (checkResult.msg.indexOf("自动续期时不能使用短信验证") > -1) {
                     msg = `京东账号[${customDatas[0].Data4}]密码错误
 自动登录时出现短信验证，请重新提交一次账号密码。`
                 }
