@@ -124,6 +124,7 @@ async function doCheck(uid, refrensh) {
         }
         if (!process.env.jd_auto_login_uid && checkResult.status == "SMS") {
             await sendNotify("本次登录需要验证短信验证码，请回复您收到的6位验证码！");
+            break;
         }
         if (checkResult.status == "wrongSMS") {
             await sendNotify("验证码错误，请重新回复！如长时间未收到短信验证码请回复Q结束，再重新开始。");
