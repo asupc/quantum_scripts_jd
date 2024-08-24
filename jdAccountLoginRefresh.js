@@ -30,7 +30,7 @@ const refrenshInterval = 8;
             const result = await login(cdata.Data4, cdata.Data5, true)
             await doCheck(result.uid, true);
         }else{
-            console.lg("未达成自动登录条件，跳过。。。。")
+            console.log("未达成自动登录条件，跳过。。。。")
         }
     }
 
