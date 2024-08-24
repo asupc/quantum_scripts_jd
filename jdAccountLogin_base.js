@@ -99,7 +99,7 @@ async function doCheck(uid, refrensh) {
             if (!refrensh) {
                 const newEntry = {
                     Type: customDataType,
-                    Data1: user_id,
+                    Data1: process.env.user_id,
                     Data2: CommunicationUserName,
                     Data3: CommunicationUserId,
                     Data4: jdAccount,
