@@ -148,7 +148,7 @@ async function checkAddCookie(cookie) {
         msg += `
 查询账户信息被京东限流，建议稍后查询。`
     }
-    if (process.env.user_id) {
+    if (process.env.IsSystem != "true" && process.env.user_id) {
         await sendNotify(msg);
     }
     await addOrUpdateJDCookieEnv(cookie, process.env.user_id, nickName);

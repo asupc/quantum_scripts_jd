@@ -51,6 +51,7 @@ let jdVerificationCode = process.env.script_jd_verification_code; // 京东密�
             return;
         }
         await doCheck(process.env.jd_auto_login_uid_temp)
+        return;
     }
     if (process.env.jd_auto_login_uid_temp) {
         await doCheck(process.env.jd_auto_login_uid_temp);
@@ -58,7 +59,6 @@ let jdVerificationCode = process.env.script_jd_verification_code; // 京东密�
     }
     await sendNotify(`收到账号和密码请稍等...`);
     const loginResult = await login(jdAccount, jdPassword, false)
-
     if (loginResult.uid) {
         await stepCommandTaskAddEnv("jd_auto_login_uid_temp", loginResult.uid);
         await doCheck(loginResult.uid);
@@ -66,8 +66,7 @@ let jdVerificationCode = process.env.script_jd_verification_code; // 京东密�
 
 
 })().catch(e => {
-
-    console.error("出现错误:", e);
+    console.error("提交京东账号密码脚本执行异常：", e);
 });
 
 async function initCustomTitle() {

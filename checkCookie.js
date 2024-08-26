@@ -6,8 +6,6 @@
  *
  * */
 
-const got = require('got');
-
 if (!process.env.NO_CK_NOTIFY) {
     process.env.NO_CK_NOTIFY = "您没有提交CK。请按照教程获取CK发送给机器人。";
 }
@@ -19,14 +17,13 @@ if (!process.env.NO_CK_NOTIFY) {
  * */
 let CK_Failure_Notify = process.env.CK_Failure_Notify == "true"; //失效CK是否通知管理员
 
-const { disableEnvs, sendNotify, getEnvs
-} = require('./quantum');
+const { disableEnvs, sendNotify, getEnvs, getCustomData } = require('./quantum');
 
-const api = got.extend({
-    retry: { limit: 0 },
-});
 
-let isLogin = true;
+
+const { customDataType } = require('./jdAccountLogin_base');
+const { islogin } = require('./jd_base');
+
 
 !(async () => {
     var cookiesArr = await getEnvs("JD_COOKIE", null, 2);
@@ -35,13 +32,15 @@ let isLogin = true;
     process.env.CommunicationType = "";
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i].Value && cookiesArr[i].Enable) {
-            cookie = cookiesArr[i].Value;
+            const cookie = cookiesArr[i].Value;
             var pt_pin = cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]
             var UserName = (cookie.match(/pt_pin=([^; ]+)(?=;?)/) && pt_pin)
             var UserName2 = decodeURI(UserName);
             console.log(`开始检测【京东账号】${UserName2} ....\n`);
+
+            let isLogin = true;
             try {
-                await isLoginByX1a0He();
+                isLogin = await islogin(cookie);
             } catch (e) {
                 console.log("检测CK出现异常，" + cookie);
                 console.log("异常信息，" + JSON.stringify(e));
@@ -50,7 +49,22 @@ let isLogin = true;
             if (!isLogin) {
                 console.log(cookie + "失效，自动禁用失效COOKIE！")
                 if (cookiesArr[i].UserId && cookie.indexOf("app_open") == -1) {
-                    await sendNotify(`账号：【${cookiesArr[i].UserRemark}】，失效了，请重新提交！`, false, cookiesArr[i].UserId);
+                    let msg = `账号：【${cookiesArr[i].UserRemark}】，失效了！`
+                    let customDatas = await getCustomData(customDataType, null, null, {
+                        Data7: "是",
+                        Data6: pt_pin
+                    });
+                    if (customDatas.length > 0) {
+                        msg += `
+该账号已提交账号密码，稍后将自动为您登录获取CK`
+                    } else {
+                        //这里的【密码登录】请自行修改为京东账号密码登录的触发指令
+                        msg += `
+请重新获取提交
+建议提交账号密码，失效后自动为您登录获取CK
+请回复：【密码登录】`
+                    }
+                    await sendNotify(msg, false, cookiesArr[i].UserId);
                 }
                 if (CK_Failure_Notify) {
                     managerNotifyMessage += `pt_pin：${pt_pin || '-'}，账号名：${UserName2}，过期！\n`
@@ -67,19 +81,6 @@ let isLogin = true;
     } else {
         console.log("无过期CK.");
     }
-})()
-    .catch((e) => console.log(JSON.stringify(e)))
-
-async function isLoginByX1a0He() {
-    const options = {
-        url: 'https://plogin.m.jd.com/cgi-bin/ml/islogin',
-        headers: {
-            "Cookie": cookie,
-            "referer": "https://h5.m.jd.com/",
-            "User-Agent": "jdapp;iPhone;10.1.2;15.0;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-        },
-        method: 'get',
-    }
-    const body = await api(options).json();
-    isLogin = (body.islogin == "1");
-}
+})().catch((e) => {
+    console.log("checkCookie.js 执行异常信息：" + e)
+})

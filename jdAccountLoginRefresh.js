@@ -20,6 +20,9 @@ const refrenshInterval = 8;
 
 !(async () => {
     let customDatas = await getCustomData(customDataType, null, null, { Data7: "是" });
+    let successCount = 0;
+    let failCount = 0;
+    let skipCount = 0;
     for (let x = 0; x < customDatas.length; x++) {
         const cdata = customDatas[x];
         const envs = await getEnvs("JD_COOKIE", cdata.Data6, 2)
@@ -28,13 +31,27 @@ const refrenshInterval = 8;
             console.log(`环境变量失效或更新时间超过[${refrenshInterval}]小时，开始自动登录获取ck`);
             process.env.user_id = cdata.Data1
             const result = await login(cdata.Data4, cdata.Data5, true)
-            await doCheck(result.uid, true);
-        }else{
+            const checkResult = await doCheck(result.uid, true);
+            if (envs && envs.length > 0 && !envs[0].Enable && checkResult) {
+                await sendNotify(`京东账号【${envs[0].UserRemark}】密码自动登录获取CK成功！`)
+            }
+            if (checkResult) {
+                successCount++
+            } else {
+                failCount++
+            }
+        } else {
             console.log("未达成自动登录条件，跳过。。。。")
+            skipCount++;
         }
     }
+    const msg = `京东账号密码自动登录刷新结果
+成功：【${successCount}】
+失败：【${failCount}】
+跳过：【${skipCount}】`
+    // 想要通知到管理员直接放开注释
+    // await sendNotify(msg, true)
 
 })().catch(e => {
-
-    console.error("出现错误:", e);
+    console.error("【jdAccountLoginRefresh】出现错误:", e);
 });

@@ -11,6 +11,7 @@ const {
 
 const { checkAddJDCookie } = require('./jd_base');
 
+
 const customDataType = "jd_AutoLogin_Account";
 
 /**
@@ -120,7 +121,7 @@ async function doCheck(uid, refrensh) {
 请不要修改登录密码，否则自动登录将失效！`)
                 await finshStepCommandTask();
             }
-            return;
+            return true;
         }
         if (!refrensh && checkResult.status == "SMS") {
             await sendNotify("本次登录需要验证短信验证码，请回复您收到的6位验证码！");
@@ -134,6 +135,7 @@ async function doCheck(uid, refrensh) {
             if (refrensh) {
                 let customDatas = await getCustomData(customDataType, null, null, { Data4: process.env.script_jd_account });
                 let msg = ""
+
                 if (checkResult.msg.indexOf("账号或密码不正确") > -1) {
                     if (customDatas && customDatas.length > 0) {
                         customDatas[0].Data7 = "否";
@@ -142,9 +144,14 @@ async function doCheck(uid, refrensh) {
                     msg = `京东账号[${customDatas[0].Data4}]密码错误
 如需继续使用请重新提交。`
                 } else if (checkResult.msg.indexOf("自动续期时不能使用短信验证") > -1) {
+                    if (customDatas && customDatas.length > 0) {
+                        customDatas[0].Data7 = "否";
+                        await updateCustomData(newEntry);
+                    }
                     msg = `京东账号[${customDatas[0].Data4}]密码错误
 自动登录时出现短信验证，请重新提交一次账号密码。`
                 }
+
                 await sendNotify(msg, false, process.env.user_id);
             } else {
                 let msg = "，请重新开始"
