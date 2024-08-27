@@ -9,7 +9,7 @@ const {
     sendNotify, allEnvs, sleep
 } = require('./quantum');
 
-var message = process.env.OVERDUE_NOTIFY_MSG || "您的以下京东账号已经过期，请重更新提交CK：";
+const OVERDUE_NOTIFY_MSG = process.env.OVERDUE_NOTIFY_MSG || "您的以下京东账号已经过期，请重更新提交CK：";
 
 !(async () => {
     var envs = await allEnvs("JD_COOKIE", 2, false, "");
@@ -27,8 +27,12 @@ var message = process.env.OVERDUE_NOTIFY_MSG || "您的以下京东账号已经�
     }
     if (ts.length > 0) {
         for (var i = 0; i < ts.length; i++) {
-            await sleep(5000);
-            await sendNotify(message + "\n" + ts[i].List.join(","), false, ts[i].UserId);
+            await sleep(3000);
+            const message = `${OVERDUE_NOTIFY_MSG}
+${ts[i].List.join(",")}
+建议提交账号密码，失效后自动为您登录获取CK
+请回复：【密码登录】`
+            await sendNotify(message, false, ts[i].UserId);
         }
     }
 })().catch((e) => {
