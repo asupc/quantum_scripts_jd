@@ -133,9 +133,10 @@ async function doCheck(uid, refrensh) {
         }
         if (checkResult.status == "error") {
             if (refrensh) {
-                let customDatas = await getCustomData(customDataType, null, null, { Data4: process.env.script_jd_account });
+                let customDatas = await getCustomData(customDataType, null, null, {
+                    Data4: process.env.script_jd_account
+                });
                 let msg = ""
-
                 if (checkResult.msg.indexOf("账号或密码不正确") > -1) {
                     if (customDatas && customDatas.length > 0) {
                         customDatas[0].Data7 = "否";
@@ -148,7 +149,7 @@ async function doCheck(uid, refrensh) {
                         customDatas[0].Data7 = "否";
                         await updateCustomData(customDatas[0]);
                     }
-                    msg = `京东账号[${customDatas[0].Data4}]密码错误
+                    msg = `京东账号[${customDatas[0].Data4}
 自动登录时出现短信验证，请重新提交一次账号密码。`
                 }
 
