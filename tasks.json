@@ -451,7 +451,6 @@
         "TaskThreadId": null,
         "TaskStartNotify": "",
         "TaskEndNotify": "",
-        "Remark": "管理员指令！\n脚本内置推送！\n请不要开启消息推送功能！！！\n",
         "TaskSubs": [],
         "CommunicationTypes": null,
         "EnableProxy": false,
