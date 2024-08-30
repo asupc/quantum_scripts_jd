@@ -1,6 +1,11 @@
 /**
  * 京东账号密码登录刷新
- * 如账号过期，或超过12小时未登录刷新则自动登录
+ * 如账号过期，或超过N小时未登录刷新则自动登录
+ * 
+ * 指令强制刷新登录时间单位小时 未指定默认8小时
+ * scripts_jdAccountLoginrefrenshInterval 
+ * 
+ * 
  */
 const {
     sendNotify,
@@ -16,8 +21,6 @@ const moment = require('moment');
  * 强制自动登录刷新时间间隔（小时）
  * 即便ck没有失效，超过这个时间也会自动登录
  */
-
-
 
 const refrenshInterval = 8;
 
