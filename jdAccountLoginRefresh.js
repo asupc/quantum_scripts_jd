@@ -16,9 +16,16 @@ const moment = require('moment');
  * 强制自动登录刷新时间间隔（小时）
  * 即便ck没有失效，超过这个时间也会自动登录
  */
+
+
+
 const refrenshInterval = 8;
 
 !(async () => {
+    try {
+        refrenshInterval = parseInt(process.env.scripts_jdAccountLoginrefrenshInterval)
+    } catch { }
+
     let customDatas = await getCustomData(customDataType, null, null, { Data7: "是" });
     let successCount = 0;
     let failCount = 0;
