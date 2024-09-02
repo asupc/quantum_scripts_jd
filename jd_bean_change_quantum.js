@@ -215,27 +215,19 @@ async function health(cookie) {
     return '';
 }
 
-async function getjdfruitH5st() {
-    var data = JSON.stringify({
-        "shareCode": "123"
-    });
-    var config = {
-        method: 'post',
-        url: 'http://192.168.1.100:8001/initForFarm',
-        headers: {
-            'User-Agent': 'Apifox/1.0.0 (https://www.apifox.cn)',
-            'Content-Type': 'application/json'
-        },
-        body: data
-    };
-    return await api(config).json()
-}
-
 async function getjdfruit(cookie) {
-    var t = await getjdfruitH5st();
+    var hdata = await universal("initForFarm",
+        {
+            "shareCode": "123"
+        }, {
+        "appId": '8a2af',
+        "appid": "signed_wh5",
+        "version": "4.7",
+        "pt_pin": getPin(cookie)
+    });
     const options = {
         url: `https://api.m.jd.com/client.action?functionId=initForFarm`,
-        body: t.data,
+        body: hdata.data,
         headers: {
             "accept": "*/*",
             "accept-encoding": "gzip, deflate, br",
@@ -248,7 +240,7 @@ async function getjdfruit(cookie) {
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-site",
-            "User-Agent": t.ua,
+            "User-Agent": hdata.ua,
             "Content-Type": "application/x-www-form-urlencoded"
         },
         timeout: 10000,
@@ -573,7 +565,6 @@ async function GoldBalance(cookie) {
 function getPin(cookie) {
     return decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
 }
-
 
 async function farm_home(cookie) {
     var hdata = await universal("farm_home",
