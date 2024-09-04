@@ -15,7 +15,7 @@ const {
 
 const { doCheck, login, customDataType } = require('./jdAccountLogin_base');
 
-const moment = require('moment');
+let moment = require('moment');
 
 /**
  * 强制自动登录刷新时间间隔（小时）
