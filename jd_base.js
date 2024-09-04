@@ -6,7 +6,7 @@ if (!process.env.NO_CK_NOTIFY) {
     process.env.NO_CK_NOTIFY = "您没有提交CK。请按照教程获取CK发送给机器人。";
 }
 
-const { disableEnvs, deductionIntegral, getUserInfo, sendNotify, addEnvs, allEnvs, api, getCustomData, updateCustomData, addCustomData, addOrUpdateCustomDataTitle
+const { uuid, deductionIntegral, getUserInfo, sendNotify, addEnvs, allEnvs, api, getCustomData, updateCustomData, addCustomData, addOrUpdateCustomDataTitle
 } = require('./quantum');
 
 const wskeyCustomDataType = "wskey_record";
@@ -108,7 +108,7 @@ async function checkAddCookie(cookie) {
         await sendNotify("检查账号登录状态异常，建议稍后重新提交。");
         return;
     }
-    if (!loginState && process.env.user_id) {
+    if (!loginState) {
         await sendNotify(`【${cookie}】提交失败，Cookie可能过期了`)
         return;
     }
@@ -121,36 +121,29 @@ async function checkAddCookie(cookie) {
         }
     }
     let nickName = UserName2;
+    let jdInfo = await GetJDUserInfoUnion(cookie);
     let msg = "京东账号提交成功！";
-    try {
-        let jdInfo = await GetJDUserInfoUnion(cookie);
-        if (jdInfo.retcode == 0) {
-            nickName = jdInfo.data.userInfo.baseInfo.nickname || nickName
-            msg += `
+    if (jdInfo.retcode == 0) {
+        nickName = jdInfo.data.userInfo.baseInfo.nickname || nickName
+        msg += `
 用户等级：${jdInfo.data.userInfo.baseInfo.levelName}
 京东昵称：${jdInfo.data.userInfo.baseInfo.nickname || nickName}`
-            try {
-                if (jdInfo.data.assetInfo.beanNum) {
-                    msg += "\r\n剩余京豆：" + jdInfo.data.assetInfo.beanNum
-                }
-                if (jdInfo.data.assetInfo.redBalance && parseInt(jdInfo.data.assetInfo.redBalance) > 0) {
-                    msg += "\r\n剩余红包：" + jdInfo.data.assetInfo.redBalance
-                }
-            } catch {
-
+        try {
+            if (jdInfo.data.assetInfo.beanNum) {
+                msg += "\r\n剩余京豆：" + jdInfo.data.assetInfo.beanNum
             }
-        } else {
-            console.log("获取账号基本信息限流。。")
-            msg += `
- 查询账户信息被京东限流，建议稍后查询。`
+            if (jdInfo.data.assetInfo.redBalance && parseInt(jdInfo.data.assetInfo.redBalance) > 0) {
+                msg += "\r\n剩余红包：" + jdInfo.data.assetInfo.redBalance
+            }
+        } catch {
+
         }
-    } catch (e) {
+    } else {
+        console.log("获取账号基本信息限流。。")
         msg += `
-查询账户信息被京东限流，建议稍后查询。`
+未查询账户基本信息，建议稍后查询！`
     }
-    if (process.env.IsSystem != "true" && process.env.user_id) {
-        await sendNotify(msg);
-    }
+    await sendNotify(msg);
     await addOrUpdateJDCookieEnv(cookie, process.env.user_id, nickName);
 }
 
