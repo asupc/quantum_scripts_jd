@@ -2,7 +2,7 @@
  * 京东账号密码登录刷新
  * 如账号过期，或超过N小时未登录刷新则自动登录
  * 
- * 指令强制刷新登录时间单位小时 未指定默认8小时
+ * 指令强制刷新登录时间单位小时 未指定默认16小时
  * scripts_jdAccountLoginrefrenshInterval 
  * 
  * 
@@ -22,12 +22,14 @@ const moment = require('moment');
  * 即便ck没有失效，超过这个时间也会自动登录
  */
 
-const refrenshInterval = 8;
+const refrenshInterval = 16;
 
 !(async () => {
     try {
         refrenshInterval = parseInt(process.env.scripts_jdAccountLoginrefrenshInterval)
-    } catch { }
+    } catch {
+        refrenshInterval = 16
+    }
 
     let customDatas = await getCustomData(customDataType, null, null, { Data7: "是" });
     let successCount = 0;

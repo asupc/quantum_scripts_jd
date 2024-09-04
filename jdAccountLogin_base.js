@@ -149,8 +149,9 @@ async function doCheck(uid, refrensh) {
                         customDatas[0].Data7 = "否";
                         await updateCustomData(customDatas[0]);
                     }
-                    msg = `京东账号[${customDatas[0].Data4}
-自动登录时出现短信验证，请重新提交一次账号密码。`
+                    msg = `京东账号[${customDatas[0].Data4}]
+自动登录时出现短信验证
+建议重新提交一次账号密码`
                 }
 
                 await sendNotify(msg, false, process.env.user_id);

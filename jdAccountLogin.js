@@ -7,12 +7,11 @@
 const {
     sendNotify,
     addOrUpdateCustomDataTitle,
-    sleep,
     stepCommandTaskAddEnv,
     redoStepCommandTask
 } = require("./quantum");
 
-const { doCheck, check, login, sms, customDataType } = require('./jdAccountLogin_base');
+const { doCheck, login, sms, customDataType } = require('./jdAccountLogin_base');
 
 
 // 定义环境变量获取京东账号和密码
