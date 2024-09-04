@@ -41,7 +41,6 @@ const refrenshInterval = 16;
         console.log(`开始处理PIN：【${cdata.Data6}】，获取环境变量【${envs.length}】个`)
         if (!envs || envs.length <= 0 || !envs[0].Enable || moment(envs[0].UpdateTime) < moment().add(-refrenshInterval, "hours")) {
             console.log(`环境变量失效或更新时间超过[${refrenshInterval}]小时，开始自动登录获取ck`);
-
             process.env.user_id = cdata.Data1
             process.env.script_jd_account = cdata.Data4
             process.env.script_jd_password = cdata.Data5

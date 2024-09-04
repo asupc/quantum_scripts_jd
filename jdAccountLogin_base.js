@@ -9,7 +9,7 @@ const {
     redoStepCommandTask
 } = require("./quantum");
 
-const { checkAddJDCookie } = require('./jd_base');
+const { checkAddJDCookie, addWskeyCustomDataTitle } = require('./jd_base');
 
 
 const customDataType = "jd_AutoLogin_Account";
@@ -140,20 +140,22 @@ async function doCheck(uid, refrensh) {
                 if (checkResult.msg.indexOf("账号或密码不正确") > -1) {
                     if (customDatas && customDatas.length > 0) {
                         customDatas[0].Data7 = "否";
-                        await updateCustomData(customDatas[0]);
                     }
                     msg = `京东账号[${customDatas[0].Data4}]密码错误
 如需继续使用请重新提交。`
                 } else if (checkResult.msg.indexOf("自动续期时不能使用短信验证") > -1) {
                     if (customDatas && customDatas.length > 0) {
                         customDatas[0].Data7 = "否";
-                        await updateCustomData(customDatas[0]);
                     }
                     msg = `京东账号[${customDatas[0].Data4}]
 自动登录时出现短信验证
 建议重新提交一次账号密码`
+                } else {
+                    console.log(`出现其他未知异常：【${checkResult.msg}】`);
+                    await sendNotify($`京东自动登录刷新出现未知异常：
+【${checkResult.msg}】`);
                 }
-
+                await updateCustomData(customDatas[0]);
                 await sendNotify(msg, false, process.env.user_id);
             } else {
                 let msg = "，请重新开始"
