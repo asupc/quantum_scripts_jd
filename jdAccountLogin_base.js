@@ -9,7 +9,7 @@ const {
     redoStepCommandTask
 } = require("./quantum");
 
-const { addOrUpdateJDCookieEnv, addWskeyCustomDataTitle } = require('./jd_base');
+const { addOrUpdateJDCookie, addWskeyCustomDataTitle } = require('./jd_base');
 
 
 const customDataType = "jd_AutoLogin_Account";
@@ -98,7 +98,7 @@ async function doCheck(uid, refrensh) {
             const pt_pin = checkResult.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]
             const notifyStatus = process.env.system_enable_notify;
             process.env.system_enable_notify = "false"
-            await addOrUpdateJDCookieEnv(checkResult.cookie,process.env.user_id)
+            await addOrUpdateJDCookie(checkResult.cookie,process.env.user_id)
             process.env.system_enable_notify = notifyStatus;
             if (!refrensh) {
                 const newEntry = {

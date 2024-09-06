@@ -22,7 +22,7 @@ let moment = require('moment');
  * 即便ck没有失效，超过这个时间也会自动登录
  */
 
-const refrenshInterval = 16;
+let refrenshInterval = 16;
 
 !(async () => {
     try {
