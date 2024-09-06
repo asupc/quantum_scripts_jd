@@ -9,7 +9,7 @@ const {
     redoStepCommandTask
 } = require("./quantum");
 
-const { checkAddJDCookie, addWskeyCustomDataTitle } = require('./jd_base');
+const { addOrUpdateJDCookieEnv, addWskeyCustomDataTitle } = require('./jd_base');
 
 
 const customDataType = "jd_AutoLogin_Account";
@@ -96,7 +96,10 @@ async function doCheck(uid, refrensh) {
         console.log(`第【${retryCount}】次检查登录结果：` + JSON.stringify(checkResult));
         if (checkResult.cookie) {
             const pt_pin = checkResult.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]
-            await checkAddJDCookie(checkResult.cookie)
+            const notifyStatus = process.env.system_enable_notify;
+            process.env.system_enable_notify = "false"
+            await addOrUpdateJDCookieEnv(checkResult.cookie,process.env.user_id)
+            process.env.system_enable_notify = notifyStatus;
             if (!refrensh) {
                 const newEntry = {
                     Type: customDataType,
@@ -118,17 +121,20 @@ async function doCheck(uid, refrensh) {
                     console.log("新增京东账号信息到自定义数据中");
                 }
                 await sendNotify(`京东账号密码提交成功了!
-请不要修改登录密码，否则自动登录将失效！`)
+请不要修改登录密码
+否则自动登录将失效`)
                 await finshStepCommandTask();
             }
             return true;
         }
         if (!refrensh && checkResult.status == "SMS") {
-            await sendNotify("本次登录需要验证短信验证码，请回复您收到的6位验证码！");
+            await sendNotify(`本次登录需要验证短信验证码
+请回复您收到的6位验证码！`);
             break;
         }
         if (checkResult.status == "wrongSMS") {
-            await sendNotify("验证码错误，请重新回复！如长时间未收到短信验证码请回复Q结束，再重新开始。");
+            await sendNotify(`验证码错误，请重新回复！
+如长时间未收到短信验证码请回复Q结束，再重新开始。`);
             await redoStepCommandTask();
         }
         if (checkResult.status == "error") {
@@ -153,7 +159,7 @@ async function doCheck(uid, refrensh) {
                 } else {
                     console.log(`出现其他未知异常：【${checkResult.msg}】`);
                     await sendNotify($`京东自动登录刷新出现未知异常：
-【${checkResult.msg}】`);
+【${checkResult.msg}】`, true);
                 }
                 await updateCustomData(customDatas[0]);
                 await sendNotify(msg, false, process.env.user_id);

@@ -150,6 +150,9 @@ async function checkAddCookie(cookie) {
 async function addOrUpdateJDCookieEnv(jdCookie, user_id, nickname) {
     var pt_key = jdCookie.match(/pt_key=([^; ]+)(?=;?)/)[1]
     var pt_pin = jdCookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]
+    if (!nickname) {
+        nickname = pt_pin
+    }
     if (!pt_key || !pt_pin) {
         return;
     }
