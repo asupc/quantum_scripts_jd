@@ -40,7 +40,7 @@
         "ConcCount": 0,
         "CommandEnv": null,
         "Cron": "12 45 20 * * ?",
-        "FileName": "jingdong/overdueNotify.js",
+        "FileName": "jd_overdueNotify.js",
         "TextToPicture": false,
         "EnableRegex": false,
         "FileCache": false,
