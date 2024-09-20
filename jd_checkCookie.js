@@ -49,7 +49,7 @@ const { islogin } = require('./jd_base');
             if (!isLogin) {
                 console.log(cookie + "失效，自动禁用失效COOKIE！")
                 if (cookiesArr[i].UserId && cookie.indexOf("app_open") == -1) {
-                    let msg = `账号：【${cookiesArr[i].UserRemark}】，失效了！`
+                    let msg = `账号：【${cookiesArr[i].UserRemark}】已失效`
                     let customDatas = await getCustomData(customDataType, null, null, {
                         Data7: "是",
                         Data6: pt_pin
@@ -57,14 +57,16 @@ const { islogin } = require('./jd_base');
                     if (customDatas.length > 0) {
                         msg += `
 该账号已提交账号密码，稍后将自动为您登录获取CK`
+                        //提交了账号密码的过期不提醒。需要提醒将注释闪电
+                        // await sendNotify(msg, false, cookiesArr[i].UserId);
                     } else {
                         //这里的【密码登录】请自行修改为京东账号密码登录的触发指令
                         msg += `
 请重新获取提交
-建议提交账号密码，失效后自动为您登录获取CK
+建议提交账号密码，失效后自动为您登录获取
 请回复：【密码登录】`
+                        await sendNotify(msg, false, cookiesArr[i].UserId);
                     }
-                    await sendNotify(msg, false, cookiesArr[i].UserId);
                 }
                 if (CK_Failure_Notify) {
                     managerNotifyMessage += `pt_pin：${pt_pin || '-'}，账号名：${UserName2}，过期！\n`

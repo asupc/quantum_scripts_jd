@@ -98,7 +98,7 @@ async function doCheck(uid, refrensh) {
             const pt_pin = checkResult.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]
             const notifyStatus = process.env.system_enable_notify;
             process.env.system_enable_notify = "false"
-            await addOrUpdateJDCookie(checkResult.cookie,process.env.user_id)
+            await addOrUpdateJDCookie(checkResult.cookie, process.env.user_id)
             process.env.system_enable_notify = notifyStatus;
             if (!refrensh) {
                 const newEntry = {
@@ -158,7 +158,7 @@ async function doCheck(uid, refrensh) {
 建议重新提交一次账号密码`
                 } else {
                     console.log(`出现其他未知异常：【${checkResult.msg}】`);
-                    await sendNotify($`京东自动登录刷新出现未知异常：
+                    await sendNotify(`京东自动登录刷新出现未知异常：
 【${checkResult.msg}】`, true);
                 }
                 await updateCustomData(customDatas[0]);

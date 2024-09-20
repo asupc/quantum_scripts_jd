@@ -47,9 +47,13 @@ let refrenshInterval = 16;
 
             const result = await login(cdata.Data4, cdata.Data5, true)
             const checkResult = await doCheck(result.uid, true);
-            if (envs && envs.length > 0 && !envs[0].Enable && checkResult) {
-                await sendNotify(`京东账号【${envs[0].UserRemark}】密码自动登录获取CK成功！`)
-            }
+            /**
+             * 刷新登录成功不提醒
+             * 需要提醒将下面三行注释删掉
+             */
+            // if (envs && envs.length > 0 && !envs[0].Enable && checkResult) {
+            //     await sendNotify(`京东账号【${envs[0].UserRemark}】密码自动登录获取CK成功！`)
+            // }
             if (checkResult) {
                 successCount++
             } else {
