@@ -40,7 +40,7 @@ const { universal } = require('./h5st')
                 }, {
                 "appid": "siteppM",
                 "appId": "d2f64",
-                "version": "4.7",
+                "version": "skuOnceApply",
                 "pin": UserName2
             });
             let config = {
@@ -71,7 +71,7 @@ const { universal } = require('./h5st')
                     console.log("商品没有降价~想屁吃~")
                 }
             }
-            console.log(`[${cookiesArr[i].UserRemark}]价保申请结果：【${data.responseMessage}】`)
+            console.log(`[${cookiesArr[i].UserRemark}]价保申请响应：【${data.responseMessage}】`)
             await sleep(5000);
         }
     }
